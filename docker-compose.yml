@@ -141,3 +141,27 @@ volumes:
       type: none
       o: bind
       device: ${WORKDIR}
+
+x-mutagen:
+  sync:
+    defaults:
+      mode: "two-way-resolved"
+      symlink:
+        mode: "posix-raw"
+      configurationBeta:
+        permissions:
+          defaultOwner: "id:1111"
+          defaultGroup: "id:1111"
+          defaultFileMode: "0666"
+          defaultDirectoryMode: "0666"
+      ignore:
+        vcs: true
+    ssh_keys:
+      alpha: ${HOME}/.ssh
+      beta: "volume://ssh_keys"
+    composer_cache:
+      alpha: ${HOME}/.composer
+      beta: "volume://composer_cache"
+    app_data:
+      alpha: "./htdocs"
+      beta: "volume://app_data"

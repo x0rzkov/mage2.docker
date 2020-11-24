@@ -10,21 +10,23 @@ message() {
 }
 
 dockerRefresh() {
+   if [[ $(uname -s) == "Darwin" ]]; then
+    osxExtraPackages
+    rePlaceInEnv "false" "SSL"
+    if ! [[ -x "$(command -v mutagen)" ]]; then
+      message 'Error: mutagen is not installed.' >&2
+      exit 1
+    fi
+    message "mutagen compose up -d"
+    mutagen compose up -d
+  else
     if ! [[ -x "$(command -v docker-compose)" ]]; then
-        message 'Error: docker-compose is not installed.' >&2
-        exit 1
+      message 'Error: docker-compose is not installed.' >&2
+      exit 1
     fi
-
-    if [[ $(uname -s) == "Darwin" ]]; then
-        message "docker-sync start"
-        docker-sync start;
-
-        message "docker-compose -f docker-compose.osx.yml up -d"
-        docker-compose -f docker-compose.osx.yml up -d
-    else
-        message "docker-compose up -d;"
-        docker-compose up -d
-    fi
+    message "docker-compose up -d;"
+    docker-compose up -d
+  fi
 }
 
 dockerRefresh

@@ -47,38 +47,27 @@ osxExtraPackages() {
   if [[ ! -x "$(command -v brew)" ]]; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   fi
-  if [[ ! -x "$(command -v unison)" ]]; then
-    message "brew install unison"
-    brew install unison
+  if [[ ! -x "$(command -v mutagen)" ]]; then
+    message "brew install mutagen-io/mutagen/mutagen;"
+    brew install mutagen-io/mutagen/mutagen;
   fi
-  if [[ ! -d /usr/local/opt/unox ]]; then
-    message "brew install eugenmayer/dockersync/unox"
-    brew install eugenmayer/dockersync/unox
-  fi
-  if [[ ! -x "$(command -v docker-sync)" ]]; then
-    message "gem install docker-sync;"
-    sudo gem install docker-syncÌ
-  fi
-}
-
-osxDockerSync() {
-  message "docker-sync start"
-  docker-sync start
 }
 
 dockerRefresh() {
-  if ! [[ -x "$(command -v docker-compose)" ]]; then
-    message 'Error: docker-compose is not installed.' >&2
-    exit 1
-  fi
-
   if [[ $(uname -s) == "Darwin" ]]; then
     osxExtraPackages
     rePlaceInEnv "false" "SSL"
-    osxDockerSync
-    message "docker-compose -f docker-compose.osx.yml up -d"
-    docker-compose -f docker-compose.osx.yml up -d
+    if ! [[ -x "$(command -v mutagen)" ]]; then
+      message 'Error: mutagen is not installed.' >&2
+      exit 1
+    fi
+    message "mutagen daemon start"
+    mutagen daemon start
   else
+    if ! [[ -x "$(command -v docker-compose)" ]]; then
+      message 'Error: docker-compose is not installed.' >&2
+      exit 1
+    fi
     message "docker-compose up -d;"
     docker-compose up -d
   fi
